@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-env
+  # namespace: fullstack-app
+data:
+  MONGO_DB: "mydatabase"
+  MONGO_PORT: "27017"
+  MONGO_USERNAME: "admin"
+  MONGO_PASSWORD: "password"
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  # namespace: fullstack-app
+data:
+  MONGO_URI: "mongodb://admin:password@mongodb-service:27017/?authSource=admin"

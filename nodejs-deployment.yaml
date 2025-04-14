@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs
+  labels:
+    app: nodejs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs
+  template:
+    metadata:
+      labels:
+        app: nodejs
+    spec:
+      initContainers:
+        - name: init-app
+          image: charlino4u/node-kubernetes:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Copying app files..." && \
+              cp -r /home/node/app/* /app
+          volumeMounts:
+            - name: nodejs-code
+              mountPath: /app
+      containers:
+        - name: nodejs
+          image: charlino4u/node-kubernetes:latest
+          args:
+            - /home/node/app/node_modules/.bin/nodemon
+            - app.js
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: nodejs-env
+                  key: MONGO_DB
+            - name: MONGO_HOSTNAME
+              value: db
+            - name: MONGO_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: nodejs-env
+                  key: MONGO_PORT
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_USERNAME
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_PASSWORD
+          volumeMounts:
+            - name: nodejs-code
+              mountPath: /home/node/app
+      volumes:
+        - name: nodejs-code
+          emptyDir: {}
+
+
+
+
+
