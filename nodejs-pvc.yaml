@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: nodejs-claim0
 spec:
-  volumeName: nodejs-code-pv   # 👈 explicitly bind to the static PV
+  volumeName: nodejs-code-pv   #👈explicitly bind to the static PV
   accessModes:
     - ReadWriteOnce
   resources:
